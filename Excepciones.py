@@ -20,3 +20,7 @@ class NombreVacioError(ExcepcionBase):
 
 class ParametroInvalidoError(ExcepcionBase):
     pass
+
+
+class CiudadDuplicadaError(ExcepcionBase):
+    pass

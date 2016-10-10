@@ -1,6 +1,6 @@
 import googlemaps
 
-from Excepciones import NoExisteCaminoError, CiudadInexistenteError
+from Excepciones import NoExisteCaminoError, CiudadInexistenteError, CiudadDuplicadaError
 from Formateador import Formateador
 from Ruta import Ruta
 from config import *
@@ -13,7 +13,10 @@ class Trayecto:
         self.lista_de_rutas = []
         if not self.existe_camino(ciudad1, ciudad2):
             raise NoExisteCaminoError('No existe ruta entre estas ciudades')
-        self.lista_de_rutas.append(self.crear_ruta(ciudad1, ciudad2))
+        ruta = self.crear_ruta(ciudad1, ciudad2)
+        if ruta.distancia == 0:
+            raise CiudadDuplicadaError('Ciudad duplicada, verifique que la ciudad origen y destino no sean iguales')
+        self.lista_de_rutas.append(ruta)
         self.nombre = nombre
 
     def crear_ruta(self, ciudad1, ciudad2):
@@ -34,6 +37,8 @@ class Trayecto:
         if not self.existe_camino(ultima_ciudad, ciudad):
             raise NoExisteCaminoError('No existe ruta entre estas ciudades')
         ruta_a_agregar = self.crear_ruta(ultima_ciudad, ciudad)
+        if ruta_a_agregar.distancia == 0:
+            raise CiudadDuplicadaError('Ciudad duplicada, verifique que la ciudad origen y destino no sean iguales')
         self.lista_de_rutas.append(ruta_a_agregar)
 
     def agregar_ciudad(self, ciudad_referencia, ciudad_a_agregar):
@@ -48,6 +53,9 @@ class Trayecto:
                     raise NoExisteCaminoError('No existe ruta entre estas ciudades')
                 ruta1 = self.crear_ruta(ruta.origen, ciudad_a_agregar)
                 ruta2 = self.crear_ruta(ciudad_a_agregar, ciudad_referencia)
+                if ruta1.distancia == 0 or ruta2.distancia == 0:
+                    raise CiudadDuplicadaError(
+                        'Ciudad duplicada, verifique que la ciudad origen y destino no sean iguales')
                 self.lista_de_rutas[i] = ruta1
                 self.lista_de_rutas.insert(i + 1, ruta2)
                 encontro = True
